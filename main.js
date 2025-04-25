@@ -1,9 +1,10 @@
 import './style.css';
-import {Feature, Image, Map, View} from 'ol';
+import {Feature, Graticule, Image, Map, View} from 'ol';
 import { Point } from 'ol/geom';
 
 import ImageLayer from 'ol/layer/Image';
 import TileLayer from 'ol/layer/Tile';
+import Heatmap from 'ol/layer/Heatmap';
 import VectorLayer from 'ol/layer/Vector';
 import { ImageStatic, ImageWMS, StadiaMaps, TileWMS, Vector } from 'ol/source';
 import ImageSource from 'ol/source/Image';
@@ -135,16 +136,48 @@ var vectorSource = new VectorSource({
 // Vector layer
 var vectorLayer = new VectorLayer({
   source: vectorSource,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'rgba(255,0,0,0.7)', //It can also be #ff0000
-      width: 5,
-      lineDash: [5,10]
-    }),
-    fill: new Fill({
-      color: 'rgba(142,226,136,0.6)'
+  // style: new Style({
+  //   stroke: new Stroke({
+  //     color: 'rgba(255,0,0,0.7)', //It can also be #ff0000
+  //     width: 5,
+  //     lineDash: [5,10]
+  //   }),
+  //   fill: new Fill({
+  //     color: 'rgba(142,226,136,0.6)'
+  //   })
+  // })
+  style : (feature) => {
+    return new Style({
+      stroke: new Stroke({
+        color: feature.getProperties().prop === 'a' ? 
+        'rgba(255,0,0,0.7)' : 'rgba(0,255,0,0.7)', //It can also be #ff0000
+        width: 5,
+        lineDash: [5,10]
+      }),
+      fill: new Fill({
+        color: feature.getProperties().prop === 'a' ?
+        'rgba(142,226,136,0.6)' : 'rgba(0,0,0,0.3)'
+      })
     })
-  })
+  }
 })
 
 map.addLayer(vectorLayer)
+
+// Heatmap
+var heatmapsource = new VectorSource({
+  format: new GeoJSON(),
+  url:'police.geojson'
+})
+
+var heatmapLayer = new Heatmap({
+  source: heatmapsource
+})
+
+map.addLayer(heatmapLayer)
+
+// Graticule
+var graticule = new Graticule({
+  map: map,
+  showLabels: true
+})
