@@ -1,7 +1,9 @@
 import './style.css';
 import {Feature, Graticule, Image, Map, View} from 'ol';
 import { Point } from 'ol/geom';
-
+import DragBox from 'ol/interaction/DragBox.js';
+import Draw from 'ol/interaction/Draw.js';
+import DragAndDrop from 'ol/interaction/DragAndDrop.js';
 import ImageLayer from 'ol/layer/Image';
 import TileLayer from 'ol/layer/Tile';
 import Heatmap from 'ol/layer/Heatmap';
@@ -181,3 +183,47 @@ var graticule = new Graticule({
   map: map,
   showLabels: true
 })
+
+// -------------------- Intercations ------------------
+var dragBox = new DragBox({})
+dragBox.on('boxstart', (e) => {
+  console.log("Box Ev")
+})
+
+dragBox.on('boxend', (e) => {
+  map.getView().fit(dragBox.getGeometry().getExtent(), map.getSize())
+})
+map.addInteraction(dragBox)
+
+//Drag and Drop
+var dragSource = new VectorSource()
+var dragLayer = new VectorLayer({
+  source: dragSource
+})
+map.addLayer(dragLayer)
+
+var dragDrop = new DragAndDrop({
+  formatConstructors: [GeoJSON],
+  source: dragSource
+})
+
+dragDrop.on('addfeatures', (e) => {
+  console.log(e)
+})
+//map.addInteraction(dragDrop)
+
+//Draw
+var drawSource = new VectorSource();
+var drawLayer = new VectorLayer({
+  source: drawSource
+})
+map.addLayer(drawLayer)
+
+var draw = new Draw({
+  source: drawSource,
+  type: 'Polygon'
+})
+draw.on('drawend', (e) => {
+  drawSource.clear()
+})
+map.addInteraction(draw)
