@@ -19,9 +19,40 @@ import Style from 'ol/style/Style';
 import proj4 from 'proj4';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import Control from 'ol/control/Control.js';
+import {defaults as defaultControls} from 'ol/control/defaults.js';
+
 
 //Define a projection
 //proj4.defs("EPSG:32643","+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs +type=crs");
+
+class RotateNorthControl extends Control {
+  /**
+   * @param {Object} [opt_options] Control options.
+   */
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const button = document.createElement('button');
+    button.innerHTML = 'N';
+
+    const element = document.createElement('div');
+    element.className = 'rotate-north ol-unselectable ol-control';
+    element.appendChild(button);
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    button.addEventListener('click', this.handleRotateNorth.bind(this), false);
+  }
+
+  handleRotateNorth() {
+    this.getMap().getView().setRotation(0);
+  }
+}
+
 
 // View
 const myView = new View({
@@ -51,6 +82,7 @@ const labelsSteman = new TileLayer({
 });
 
 const map = new Map({
+  controls: defaultControls().extend([new RotateNorthControl()]),
   target: 'map',
   layers: [waterSteman, labelsSteman],
   view: myView
@@ -226,4 +258,4 @@ var draw = new Draw({
 draw.on('drawend', (e) => {
   drawSource.clear()
 })
-map.addInteraction(draw)
+// map.addInteraction(draw)
