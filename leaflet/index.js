@@ -1,4 +1,4 @@
-var map = L.map('map').setView([51.505, -0.09], 13);
+var map = L.map('map').setView([-26.23, -48.59], 13);
 
 //https://leaflet-extras.github.io/leaflet-providers/preview/
 
@@ -38,3 +38,52 @@ dragMarker.on('dragend', function(evt) {
     console.log('finished dragging');
     console.log(evt);
 })
+
+var geoJSON = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "test1"
+      },
+      "geometry": {
+        "coordinates": [
+          -48.59184686563725,
+          -26.237066038793436
+        ],
+        "type": "Point"
+      },
+      "id": 0
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "test2"
+      },
+      "geometry": {
+        "coordinates": [
+          -48.59451925919498,
+          -26.30052910047091
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}
+
+L.geoJSON(geoJSON).addTo(map);
+
+var myIcon = L.icon({
+    iconUrl: 'https://cdn.pixabay.com/photo/2015/10/01/17/17/car-967387_960_720.png',
+    iconSize: [60, 30],
+    iconAnchor: [0, 0],
+    popupAnchor: [30, 0],
+    shadowSize: [68, 95],
+    shadowAnchor: [22, 94]
+});
+
+var marker = L.marker([-26.31052910047091, -48.57451925919498], {icon: myIcon}).addTo(map);
+
+marker.bindPopup('<h1>This is title</h1><br><p>This is a custom icon marker.</p>');
+marker.bindTooltip('This is a tooltip');
